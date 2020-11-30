@@ -9,6 +9,8 @@ This is a Discord bot which implements a simple shortest path graph-based conver
 
 The trigger for this bot is `!CONV`. Invoking the trigger with no additional arguments will bring up a help menu. You can also call `!CONV help` for the same menu.
 
+![Help menu](assets/img/help.png)
+
 ### Converting between resources
 
 To calculate the resulting number of `item2` possible from a certain number `n` of `item1`, the usage is:
@@ -23,6 +25,8 @@ To calculate the resulting number of `item2` possible from a certain number `n` 
 
 The bot will return both the largest possible number of `item2` that can be made from `item1`, as well as the conversion path that it used to get there.
 
+![Conversion Syntax](assets/img/conv.png)
+
 ### Moving between areas
 
 When your character transitions to a new level, the bot will not automatically recognise this. You must update your area yourself. This ensures that the correct trade rates are used and that certain conversions are disallowed.
@@ -34,3 +38,5 @@ To change to area `n`:
 ```
 
 The bot will recognise your user name and update your area in the PostgreSQL database.
+
+![Change area](assets/img/change.png)
