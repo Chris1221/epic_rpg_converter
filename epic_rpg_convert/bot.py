@@ -3,7 +3,7 @@ import random
 import time
 import numpy as np
 
-import epic_convert as e
+import epic_rpg_convert as e
 
 import discord
 from discord.ext import commands

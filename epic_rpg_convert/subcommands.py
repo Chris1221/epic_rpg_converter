@@ -1,4 +1,4 @@
-import epic_convert as e
+import epic_rpg_convert as e
 import discord
 def call_convert(message, area):
     n, i1, i2 = e.methods.parse_input(message.content)
