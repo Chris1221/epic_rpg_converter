@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-area_db = {}
+inv_users = {'current': ""}
 
 def run():
     trigger = "!CONV"
@@ -19,7 +19,7 @@ def run():
 
     bot = commands.Bot(command_prefix=trigger)
 
-    db = e.methods.Database("testdb", "ccole", "password")
+    db = e.methods.Database(os.getenv("DB_NAME"), os.getenv("DB_USER"), os.getenv("DB_PASS"))
 
     @bot.event
     async def on_ready():
@@ -30,6 +30,15 @@ def run():
         print(message.content)
 
         split = message.content.rstrip().split(" ")
+
+        if split[0] == "rpg":
+            if split[1] == "i" or split[1] == "inv" or split[1] == "inventory":
+                inv_users["current"] = str(message.author).replace("#", "_")
+                print(f"Found inv: {inv_users['current']}")
+
+        if len(message.embeds) > 0:
+            if e.methods.is_inventory(message):
+                e.methods.parse_inv(message, db, inv_users["current"])
 
         if split[0] == trigger:
 
@@ -47,6 +56,8 @@ def run():
                     embed = e.subcommands.call_change_area(message, user, db)
                 elif split[1] == "help":
                     embed = e.subcommands.call_help()
+                elif split[1] in ["i", "inv", "inventory"]:
+                    embed = e.subcommands.call_inventory(message, area, db, user)
                 else: 
                     embed = e.subcommands.call_convert(message, area)
 

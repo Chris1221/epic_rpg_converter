@@ -2,7 +2,9 @@ import networkx as nx
 import numpy as np
 import os
 import psycopg2
-
+import json
+import datetime
+import re
 ## Conversion logic
 
 ## Items are stored as edges in a graph, with
@@ -51,42 +53,42 @@ def create_base_graph(area = 1):
     ## Base definition in terms of wood and fish.
     ## This needs to be generalized per area.
 
-    c.add_edge('log', 'fish', weight = a.fish(area, True))
-    c.add_edge('fish', 'log', weight = a.fish(area))
+    c.add_edge('wooden_log', 'normie_fish', weight = a.fish(area, True))
+    c.add_edge('normie_fish', 'wooden_log', weight = a.fish(area))
 
     # Add fish values.
-    c.add_edge('fish', 'golden-fish', weight = 1/15)
-    c.add_edge('golden-fish', 'fish', weight = 12) 
+    c.add_edge('normie_fish', 'golden_fish', weight = 1/15)
+    c.add_edge('golden_fish', 'normie_fish', weight = 12) 
 
-    c.add_edge('golden-fish', 'epic-fish', weight = 1/100)
-    c.add_edge('epic-fish', 'golden-fish', weight = 80)
+    c.add_edge('golden_fish', 'epic_fish', weight = 1/100)
+    c.add_edge('epic_fish', 'golden_fish', weight = 80)
 
     ## Wood values
-    c.add_edge('log', 'epic-log', weight = 1/25)
-    c.add_edge('epic-log', 'log', weight = 20)
+    c.add_edge('wooden_log', 'epic_log', weight = 1/25)
+    c.add_edge('epic_log', 'wooden_log', weight = 20)
 
-    c.add_edge('epic-log', 'super-log', weight = 1/10)
-    c.add_edge('super-log', 'epic-log', weight = 8)
+    c.add_edge('epic_log', 'super_log', weight = 1/10)
+    c.add_edge('super_log', 'epic_log', weight = 8)
 
-    c.add_edge('super-log', 'mega-log', weight = 1/10)
-    c.add_edge('mega-log', 'super-log', weight = 8)
+    c.add_edge('super_log', 'mega_log', weight = 1/10)
+    c.add_edge('mega_log', 'super_log', weight = 8)
 
-    c.add_edge('mega-log', 'hyper-log', weight = 1/10)
-    c.add_edge('hyper-log', 'mega-log', weight = 8)
+    c.add_edge('mega_log', 'hyper_log', weight = 1/10)
+    c.add_edge('hyper_log', 'mega_log', weight = 8)
 
-    c.add_edge('hyper-log', 'ultra-log', weight = 1/10)
-    c.add_edge('ultra-log', 'hyper-log', weight = 8)
+    c.add_edge('hyper_log', 'ultra_log', weight = 1/10)
+    c.add_edge('ultra_log', 'hyper_log', weight = 8)
 
     ## Fruit
-    c.add_edge('apple', 'log', weight = a.apple(area, True))
-    c.add_edge('log', 'apple', weight = a.apple(area, False))
+    c.add_edge('apple', 'wooden_log', weight = a.apple(area, False))
+    c.add_edge('wooden_log', 'apple', weight = a.apple(area, True))
 
     c.add_edge('banana', 'apple', weight = 12)
     c.add_edge('apple', 'banana', weight = 1/15)
     
     ## Other
-    c.add_edge('ruby', 'log', weight = a.ruby(area, False))
-    c.add_edge('log', 'ruby', weight = a.ruby(area, True))
+    c.add_edge('ruby', 'wooden_log', weight = a.ruby(area, False))
+    c.add_edge('wooden_log', 'ruby', weight = a.ruby(area, True))
 
     return c
 
@@ -117,7 +119,7 @@ def details(graph, item1, item2, n):
         else:
             total *= w
 
-        text += f"{int(running)} {i} :arrow_right: {int(total)} {j}\n"
+        text += f"{int(running)} **{format_item_string(i)}**\t:arrow_right:\t{int(total)} **{format_item_string(j)}**\n"
         running = total
         #print(f"STEP: Weight {w}, total {total}")
     return text
@@ -160,6 +162,9 @@ class Database:
     def add_user(self, user):
         self.cursor.execute("insert into users (name, area, number_of_connects) values (%s, %s, %s);", (user, 1, 0))
         self.con.commit() 
+        self.cursor.execute("insert into inventory (username) values (%s);", (user,))
+        self.con.commit() 
+
         print(f"Added user {user} to database")
 
     def user_exists(self, user):
@@ -190,9 +195,52 @@ class Database:
         self.con.commit()
         return self.cursor.fetchall()[0][0]
 
+    def add_items(self, user, items):
+        self.cursor.execute(f"update inventory set items = %s where username = %s", (json.dumps(items), user,))
+        self.con.commit()
+
+    def get_items(self, user):
+        self.cursor.execute(f"select items from inventory where username = %s", (user,))
+        self.con.commit()
+        return json.loads(self.cursor.fetchall()[0][0])
+
+    def get_last_updated_time_inv(self, user):
+        self.cursor.execute(f"select last_update from inventory where username = %s", (user,))
+        self.con.commit()
+        return self.cursor.fetchall()[0][0]
+
+    def _rollback(self):
+        self.cursor.execute("rollback")
 
 
 
+## Inventory stuff.
+# This would probably be better off as a class
+# with a __repr__ and constructor from either
+# message or db.
+def parse_inv(message, db, user):
+    items = message.embeds[0].fields[0]
+    if items.name != "Items":
+        print("Error: Inventory is not formatted correctly.")
+    else:
+        dict_of_items = {s.split("**")[1].lower().replace(" ", "_"): int(s.split("**")[2].lstrip(": ")) for s in items.value.split("\n")}
+        db.add_items(user, dict_of_items)
+
+def is_inventory(message):
+    return "inventory" in str(message.embeds[0].author)
+
+def print_inventory(inv):
+    s = ""
+    for (item, amount) in inv.items():
+        s += f"**{format_item_string(item)}**: {str(amount)}\n"
+
+    return s
+
+def format_item_string(item):
+    spl = re.split("_|\-", item)
+    spl[0] = spl[0].capitalize()
+    return " ".join(spl)
 
 
-
+def standardize_item_string(item):
+    return item.replace("-", "_")
