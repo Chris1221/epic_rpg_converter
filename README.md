@@ -26,7 +26,7 @@ If this is not possible, or not possible in your current area (because, for exam
 ```
 
 #### Converting Your Entire Inventory
-You can also see how many of a resource could be made from all of the resources in your inventory. This bot cannot interface directly with EPIC RPG because of how Discord allows bots to behave, so you must show your inventory to update it. That means running `rpg inv` or any other valid inventory command to update the values in your inventory for this bot. You must do this before trying to use any other inventory commands. To convert your entire inventory to a certain resource, tell the bot that you want to convert your inventory, and then the item that you want to convert it to:
+You can also see how many of a resource could be made from all of the resources in your inventory. This bot cannot interface directly with EPIC RPG because of how Discord allows bots to behave, so you must show your inventory to update it. That means running `rpg inv` or any other valid inventory command to update the values in your inventory for this bot. You must do this before trying to use any other inventory commands. To convert your entire inventory to a certain resource, tell the bot that you want to convert your inventory, and then the item that you want to convert it to. If you don't specify an item, the bot will return your current inventory.
 
 ```
 !CONV inv (item)
