@@ -160,7 +160,7 @@ class Database:
             self.cursor = self.con.cursor()
     
     def add_user(self, user):
-        self.cursor.execute("insert into users (name, area, number_of_connects) values (%s, %s, %s);", (user, 1, 0))
+        self.cursor.execute("insert into users (name, area, number_of_connects, first_seen) values (%s, %s, %s, %s);", (user, 1, 0, datetime.datetime.now()))
         self.con.commit() 
         self.cursor.execute("insert into inventory (username) values (%s);", (user,))
         self.con.commit() 
@@ -206,6 +206,11 @@ class Database:
 
     def get_last_updated_time_inv(self, user):
         self.cursor.execute(f"select last_update from inventory where username = %s", (user,))
+        self.con.commit()
+        return self.cursor.fetchall()[0][0]
+    
+    def get_first_seen(self, user):
+        self.cursor.execute(f"select first_seen from users where name = %s", (user,))
         self.con.commit()
         return self.cursor.fetchall()[0][0]
 
