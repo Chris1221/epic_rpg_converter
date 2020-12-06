@@ -53,3 +53,78 @@ To see all of the data that the bot has collected on you, just ask it!
 ```
 !CONV user
 ```
+
+## Developer 
+
+If you want to host your own instance of the bot, follow these steps.
+
+### Installing the bot
+
+Clone the repository to your own computer and change directories.
+
+```sh
+git clone git@github.com:Chris1221/epic_rpg_converter.git
+cd epic_rpg_converter
+```
+Install all of the python dependencies.
+
+```
+pip install -r requirements.txt
+```
+
+Then install the bot (we use the `-e` option here so that you can edit the code and run it right away.).
+
+```
+pip install -e .
+```
+
+### Registering your bot
+
+ register a new bot on the [Discord Developer Portal](https://discord.com/developers/docs/intro) and obtain a bot token. 
+
+
+
+Create a file called `.env`. We use `python-dotenv` to manage secrets. 
+
+```sh
+## In .env
+DISCORD_TOKEN=${YOUR_TOKEN}
+```
+
+### Setting up a `PostgreSQL` database
+
+Ensure that you have PostgreSQL installed. You can either [download it](https://www.postgresql.org/download/) from an official repository or if you are on OSX, install it with Homebrew.
+
+```
+brew install postgresql
+```
+
+Start your PostgreSQL server (`psql`) 
+
+```sh
+pg_ctl -D $DATA -l $LOG start
+```
+
+Replacing the `DATA` directory and `LOG` variables with values appropriate for your system. 
+
+Your username will be your system username by default.
+
+Open up the `.env` file from before and add three values:
+
+```
+DB_NAME="Name"
+DB_USER="YOUR_NAME"
+DB_PASS="A_PASSWORD"
+```
+
+The name will be the name of the database that is created, while the username and password do what they say on the tin.
+
+### Running the bot
+
+To run the bot, either call `epic_rpg_converter.bot.run()` or use the command line entry point:
+
+```sh
+convert_bot
+```
+
+After that, invite your bot to a server and play around. If you want to use a different trigger (`!CONV` used here) so that you can have both bots in the same server, change the `trigger` variable in `bot.py`.
