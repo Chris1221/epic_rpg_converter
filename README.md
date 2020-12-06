@@ -4,6 +4,21 @@
 
 This is a Discord bot which implements a simple shortest path graph-based conversion strategy between the many resources available in Epic RPG. It allows users to quickly switch areas as they progress through the game and intelligently alerts them to impossible trades (apples for logs in Area 1, for example). A user is automatically registered with the bot their first time using it, and information such as area preferences and usage statistics are persistently stored in a PostgreSQL database. 
 
+---
+
+[Usage](https://github.com/Chris1221/epic_rpg_converter#Usage)
+- [Converting Specific Items](https://github.com/Chris1221/epic_rpg_converter#converting-specific-items)
+- [Converting Your Entire Inventory](https://github.com/Chris1221/epic_rpg_converter#converting-your-entire-inventory)
+- [Trade Rates from an Area](https://github.com/Chris1221/epic_rpg_converter#trade-rates-from-an-area)
+- [Your User Data](https://github.com/Chris1221/epic_rpg_converter#your-user-data)
+
+[Developer](https://github.com/Chris1221/epic_rpg_converter#developer)
+- [Intalling the Bot](https://github.com/Chris1221/epic_rpg_converter#installing-the-bot)
+- [Registering your bot](https://github.com/Chris1221/epic_rpg_converter#registering-your-bot)
+- [Setting up your database](https://github.com/Chris1221/epic_rpg_converter#setting-up-your-database)
+- [Running the bot](https://github.com/Chris1221/epic_rpg_converter#running-the-bot)
+
+
 ## Usage
 
 #### Converting Specific Items
@@ -91,7 +106,7 @@ Create a file called `.env`. We use `python-dotenv` to manage secrets.
 DISCORD_TOKEN=${YOUR_TOKEN}
 ```
 
-### Setting up a `PostgreSQL` database
+### Setting up your database
 
 Ensure that you have PostgreSQL installed. You can either [download it](https://www.postgresql.org/download/) from an official repository or if you are on OSX, install it with Homebrew.
 
