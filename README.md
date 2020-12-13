@@ -1,10 +1,12 @@
 ## Resource conversion bot for Epic RPG
 
+
+
+This is a Discord bot which implements a simple shortest path graph-based conversion strategy between the many resources available in Epic RPG. It allows users to quickly switch areas as they progress through the game and intelligently alerts them to impossible trades (apples for logs in Area 1, for example). A user is automatically registered with the bot their first time using it, and information such as area preferences and usage statistics are persistently stored in a PostgreSQL database. 
+
 <a href="https://top.gg/bot/773260807638089768">
     <img src="https://top.gg/api/widget/773260807638089768.svg" alt="EPIC RPG Converter" />
 </a>
-
-This is a Discord bot which implements a simple shortest path graph-based conversion strategy between the many resources available in Epic RPG. It allows users to quickly switch areas as they progress through the game and intelligently alerts them to impossible trades (apples for logs in Area 1, for example). A user is automatically registered with the bot their first time using it, and information such as area preferences and usage statistics are persistently stored in a PostgreSQL database. 
 
 ---
 
