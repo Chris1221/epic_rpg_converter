@@ -1,7 +1,5 @@
 ## Resource conversion bot for Epic RPG
 
-[![Invite to server](https://img.shields.io/badge/Discord-Invite%20to%20server-blue?logo=discord)](https://discord.com/api/oauth2/authorize?client_id=773260807638089768&permissions=8&scope=bot)
-
 <a href="https://top.gg/bot/773260807638089768">
     <img src="https://top.gg/api/widget/773260807638089768.svg" alt="EPIC RPG Converter" />
 </a>
