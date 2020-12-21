@@ -196,7 +196,7 @@ class Database:
         return self.cursor.fetchall()[0][0]
 
     def add_items(self, user, items):
-        self.cursor.execute(f"update inventory set items = %s where username = %s", (json.dumps(items), user,))
+        self.cursor.execute(f"update inventory set items = %s, last_update = %s where username = %s", (json.dumps(items), datetime.datetime.now(), user,))
         self.con.commit()
 
     def get_items(self, user):

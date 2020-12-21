@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 inv_users = {'current': ""}
 
+client = discord.Client()
 def run():
     trigger = "!CONV"
 
@@ -27,27 +28,49 @@ def run():
 
     @bot.event
     async def on_message(message):
-        print(message.content)
+        if message.author == bot.user:
+            return
+        
+        #print(message.content)
+        #await client.wait_until_ready()
+        guild = message.guild.id
+        channel = bot.get_channel(int(os.getenv("CHANNEL_ID")))
+        user_channel = bot.get_channel(int(os.getenv("NEW_USER_CHANNEL_ID")))
 
-        guild = str(message.guild.id)
+        if not message.author.bot:
+            if message.content.split(" ")[0].upper() == "!CONV":
+                message_logger = discord.Embed(title = "Message log", description = f"{message.content}", color=0xff0000)
+               message_logger.add_field(name = "Username", value = f"{message.author}", inline = True)
+                message_logger.add_field(name = "Guild", value = f"{message.guild}", inline = True)
+                message_logger.add_field(name = "Channel", value = f"{message.channel}", inline = True)
+
+                await channel.send(embed = message_logger)
+
 
         split = message.content.rstrip().split(" ")
 
-        if split[0] == "rpg":
+        if split[0].lower() == "rpg":
             if split[1] == "i" or split[1] == "inv" or split[1] == "inventory":
                 inv_users[guild] = str(message.author).replace("#", "_")
                 print(f"Found inv: {inv_users[guild]}")
 
+
+        user = str(message.author).replace("#", "_")
+
         if len(message.embeds) > 0:
             if e.methods.is_inventory(message):
-                e.methods.parse_inv(message, db, inv_users[guild])
+                try:
+                    e.methods.parse_inv(message, db, inv_users[guild])
+                except KeyError:
+                    e.subcommands.call_inventory_error(user)
 
-        if split[0] == trigger:
+        if split[0].upper() == trigger:
 
             user = str(message.author).replace("#", "_")
 
             if not db.user_exists(user):
                 db.add_user(user)
+                await user_channel.send(embed = e.subcommands.call_log_new_user(message))
                 await message.channel.send(embed = e.subcommands.call_new_user(user))
                 
             area = db.get_area(user)
@@ -55,14 +78,22 @@ def run():
             if len(split) == 1:
                 embed = e.subcommands.call_help()
             else:
-                if split[1] == ["ca", "area", "change", "change-area"]:
+                if split[1] in ["ca", "area", "change", "change-area"]:
                     embed = e.subcommands.call_change_area(message, user, db)
                 elif split[1] in ["h", "help"]:
-                    embed = e.subcommands.call_help()
+                    if len(split) > 2:
+                        if split[2] in ["more", "long"]:
+                            embed = e.subcommands.call_long_help()
+                        else:
+                            embed = e.subcommands.call_help()
+                    else:
+                        embed = e.subcommands.call_help()
                 elif split[1] in ["i", "inv", "inventory"]:
                     embed = e.subcommands.call_inventory(message, area, db, user)
                 elif split[1] in ["u", "user"]:
                     embed = e.subcommands.call_user_summary(db, user)
+                elif split[1] in ["v", "vote"]:
+                    embed = e.subcommands.call_vote(user)
                 else: 
                     embed = e.subcommands.call_convert(message, area)
 
