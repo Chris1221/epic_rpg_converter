@@ -31,8 +31,6 @@ def run():
         if message.author == bot.user:
             return
         
-        #print(message.content)
-        #await client.wait_until_ready()
         guild = message.guild.id
         channel = bot.get_channel(int(os.getenv("CHANNEL_ID")))
         user_channel = bot.get_channel(int(os.getenv("NEW_USER_CHANNEL_ID")))
@@ -40,11 +38,13 @@ def run():
         if not message.author.bot:
             if message.content.split(" ")[0].upper() == "!CONV":
                 message_logger = discord.Embed(title = "Message log", description = f"{message.content}", color=0xff0000)
-               message_logger.add_field(name = "Username", value = f"{message.author}", inline = True)
-                message_logger.add_field(name = "Guild", value = f"{message.guild}", inline = True)
-                message_logger.add_field(name = "Channel", value = f"{message.channel}", inline = True)
+            else:
+                message_logger = discord.Embed(title = "Message log", description = f"{message.content}")
+            message_logger.add_field(name = "Username", value = f"{message.author}", inline = True)
+            message_logger.add_field(name = "Guild", value = f"{message.guild}", inline = True)
+            message_logger.add_field(name = "Channel", value = f"{message.channel}", inline = True)
 
-                await channel.send(embed = message_logger)
+            await channel.send(embed = message_logger)
 
 
         split = message.content.rstrip().split(" ")
