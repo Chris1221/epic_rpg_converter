@@ -114,6 +114,7 @@ def call_help():
     e = e.add_field(name = ":exclamation: Important Information :exclamation:", value = important_things)
     e = e.add_field(name = ":clock1: Quick Commands :clock2:", value = quick_commands, inline = False)
     e = e.add_field(name = ":question: More help :question:", value = more_help, inline = False)
+    e = e.add_field(name = ":partying_face: Join the official server :partying_face:", value = "Join the party at the official support server, [click here to join!](https://discord.gg/HeaGGmvPD7)", inline = False)
     return e
 
 def call_long_help():
