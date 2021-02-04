@@ -3,12 +3,17 @@ import random
 import time
 import numpy as np
 import logging
+from datetime import datetime
 
 import epic_rpg_convert as e
 
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
+d = datetime.now()
+up = d.strftime("%d/%m/%y %H:%M")
+
 
 inv_users = {'current': ""}
 
@@ -97,11 +102,17 @@ def run():
                     else:
                         embed = e.subcommands.call_help()
                 elif split[1] in ["i", "inv", "inventory", "all"]:
-                    embed = e.subcommands.call_inventory(message, area, db, user)
+                    if len(split) > 3:
+                        embed = e.subcommands.call_convert(message, area, db, user)
+                    else:
+                        embed = e.subcommands.call_inventory(message, area, db, user)
                 elif split[1] in ["u", "user"]:
                     embed = e.subcommands.call_user_summary(db, user)
                 elif split[1] in ["v", "vote"]:
                     embed = e.subcommands.call_vote(user)
+                elif split[1] in ["info"]:
+                    n = len(bot.guilds)
+                    embed = e.subcommands.call_info(str(n), up)
                 else: 
                     embed = e.subcommands.call_convert(message, area, db, user)
 

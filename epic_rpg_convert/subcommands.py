@@ -18,6 +18,7 @@ possible_items = ['wooden_log',
         'epic_fish',
         'ruby']
 
+
 def call_convert(message, area, db, user):
     n, i1, i2 = e.methods.parse_input(message.content)
 
@@ -142,14 +143,22 @@ def call_long_help():
     return embedVar
 
 def call_new_user(user):
-    embedVar = discord.Embed(title = f"Welcome to the party, {user}!", description = "I'm happy you've chosen to use my bot. Start converting items right away with ```CONV! n item1 item2```", color = 0xff0000)
-    embedVar.set_footer(text = "Need help? Find more commands with !CONV help.")
+    embedVar = discord.Embed(title = f"Welcome to the party, {user}!", description = "I'm happy you've chosen to use my bot. Check out `!conv help` for some basic instructions.", color = 0xff0000)
     return embedVar
 
 def call_inventory_error(user):
     embedVar = discord.Embed(title = "Whoops, something went wrong...", description="Either I can't find your inventory, or the item that you have requested is not in it. Have you called `rpg i` recently?", color=0xff0000)
     embedVar.set_footer(text = "Need help? Find more commands with !CONV help.")
     return embedVar
+
+def call_info(n, up):
+    embedVar = discord.Embed(title = "Server debug info", description="If you found this by accident, congrats!", color=0xff0000)
+    embedVar = embedVar.add_field(name = "Servers", value = f"{n}", inline = True)
+    embedVar = embedVar.add_field(name = "Up Time", value = f"{up}", inline = True)
+    embedVar.set_footer(text = "Need help? Find more commands with !CONV help.")
+    return embedVar
+
+
 
 def call_user_summary(db, user):
     time = db.get_first_seen(user).strftime("%b %d, %Y at %H:%m:%S EST")
