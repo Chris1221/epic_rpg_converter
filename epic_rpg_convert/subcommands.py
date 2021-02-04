@@ -111,7 +111,8 @@ __This bot doesn't actually convert the items for you__ (it isn't allowed to), i
 quick_commands =\
 """
 Convert `n` of `item1` to `item2`: ```!CONV 50000 log epic-fish``` 
-Convert your whole inventory to a single item: ```!CONV inv hyper-log```
+Convert your whole inventory to a single item (aka `inv`): ```!CONV all hyper-log```
+Convert your whole inventory of `item1` to `item2` (aka `inv`): ```!CONV all ruby hyper-log```
 Change area to `x`: ```!CONV area 7```
 See your user data: ```!CONV user```
 Vote for the bot: ```!CONV vote```

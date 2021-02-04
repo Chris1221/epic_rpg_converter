@@ -54,6 +54,7 @@ def run():
 
 
         split = message.content.rstrip().split(" ")
+        split = [i.lower() for i in split]
 
         if split[0].lower() == "rpg":
             if split[1] == "i" or split[1] == "inv" or split[1] == "inventory":
@@ -95,7 +96,7 @@ def run():
                             embed = e.subcommands.call_help()
                     else:
                         embed = e.subcommands.call_help()
-                elif split[1] in ["i", "inv", "inventory"]:
+                elif split[1] in ["i", "inv", "inventory", "all"]:
                     embed = e.subcommands.call_inventory(message, area, db, user)
                 elif split[1] in ["u", "user"]:
                     embed = e.subcommands.call_user_summary(db, user)
