@@ -18,9 +18,9 @@ possible_items = ['wooden_log',
         'epic_fish',
         'ruby']
 
-def call_convert(message, area):
+def call_convert(message, area, db, user):
     n, i1, i2 = e.methods.parse_input(message.content)
-    
+
     if i2 == "log":
         i2 = "wooden-log"
     elif i2 == "fish":
@@ -34,8 +34,21 @@ def call_convert(message, area):
     i1 = e.methods.standardize_item_string(i1)
     i2 = e.methods.standardize_item_string(i2)
 
+    if n.lower() in ["all", "inv"]:
+        try:
+            inv = db.get_items(user)
+        except:
+            db._rollback()
+            return call_inventory_error(user)
+        try:
+            n = int(inv[i1])
+        except KeyError:
+            return call_inventory_error()
+    else: 
+        n  =int(n)
+ 
     graph = e.methods.create_base_graph(area)
-    total = e.methods.convert(graph, i1,i2,int(n))
+    total = e.methods.convert(graph, i1,i2,n)
     if total == "Bad":
         return call_error(area)
 
@@ -133,7 +146,7 @@ def call_new_user(user):
     return embedVar
 
 def call_inventory_error(user):
-    embedVar = discord.Embed(title = "Whoops, something went wrong...", description="I can't find your inventory, have you called `rpg i` recently?", color=0xff0000)
+    embedVar = discord.Embed(title = "Whoops, something went wrong...", description="Either I can't find your inventory, or the item that you have requested is not in it. Have you called `rpg i` recently?", color=0xff0000)
     embedVar.set_footer(text = "Need help? Find more commands with !CONV help.")
     return embedVar
 

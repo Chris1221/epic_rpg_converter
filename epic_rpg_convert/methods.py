@@ -4,6 +4,7 @@ import os
 import psycopg2
 import json
 import datetime
+import logging
 import re
 ## Conversion logic
 
@@ -94,8 +95,9 @@ def create_base_graph(area = 1):
 
 
 def convert(graph, item1, item2, n):
-    path = nx.shortest_path(graph, item1, item2)
+    path = nx.shortest_path(graph, item1.lower(), item2.lower())
     total = 0
+
     for i, j in zip(path, path[1:]):
         w = graph[i][j]['weight']
         if w == 0: return "Bad"
@@ -103,12 +105,14 @@ def convert(graph, item1, item2, n):
             total += n * w
         else:
             total *= w
-        print(f"STEP: Weight {w}, total {total}")
+        logging.debug(f"STEP: Weight {w}, total {total}")
+
+    logging.info(f"Converted {n} {item1} to {total} {item2}")
 
     return int(np.floor(total))
 
 def details(graph, item1, item2, n):
-    path = nx.shortest_path(graph, item1, item2)
+    path = nx.shortest_path(graph, item1.lower(), item2.lower())
     total = 0
     text = ""
     running = n

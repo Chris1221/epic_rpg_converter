@@ -2,6 +2,7 @@ import os
 import random
 import time
 import numpy as np
+import logging
 
 import epic_rpg_convert as e
 
@@ -10,6 +11,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 inv_users = {'current': ""}
+
+logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
 
 client = discord.Client()
 def run():
@@ -22,12 +25,16 @@ def run():
 
     db = e.methods.Database(os.getenv("DB_NAME"), os.getenv("DB_USER"), os.getenv("DB_PASS"))
 
+
     @bot.event
     async def on_ready():
-        print(f'{bot.user.name} has connected to Discord!')
+        n = len(bot.guilds)
+        logging.info(f'{bot.user.name} has connected to {n} guilds on Discord!')
+    
 
     @bot.event
     async def on_message(message):
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="!conv help"))
         if message.author == bot.user:
             return
         
@@ -38,13 +45,12 @@ def run():
         if not message.author.bot:
             if message.content.split(" ")[0].upper() == "!CONV":
                 message_logger = discord.Embed(title = "Message log", description = f"{message.content}", color=0xff0000)
-            else:
-                message_logger = discord.Embed(title = "Message log", description = f"{message.content}")
-            message_logger.add_field(name = "Username", value = f"{message.author}", inline = True)
-            message_logger.add_field(name = "Guild", value = f"{message.guild}", inline = True)
-            message_logger.add_field(name = "Channel", value = f"{message.channel}", inline = True)
-
-            await channel.send(embed = message_logger)
+                message_logger.add_field(name = "Username", value = f"{message.author}", inline = True)
+                message_logger.add_field(name = "Guild", value = f"{message.guild}", inline = True)
+                message_logger.add_field(name = "Channel", value = f"{message.channel}", inline = True)
+            
+                if message.content.split(" ")[0].lower() != "rpg":
+                    await channel.send(embed = message_logger)
 
 
         split = message.content.rstrip().split(" ")
@@ -52,7 +58,7 @@ def run():
         if split[0].lower() == "rpg":
             if split[1] == "i" or split[1] == "inv" or split[1] == "inventory":
                 inv_users[guild] = str(message.author).replace("#", "_")
-                print(f"Found inv: {inv_users[guild]}")
+                #print(f"Found inv: {inv_users[guild]}")
 
 
         user = str(message.author).replace("#", "_")
@@ -61,8 +67,9 @@ def run():
             if e.methods.is_inventory(message):
                 try:
                     e.methods.parse_inv(message, db, inv_users[guild])
-                except KeyError:
-                    e.subcommands.call_inventory_error(user)
+                except (KeyError, IndexError):
+                    #e.subcommands.call_inventory_error(user)
+                    logging.warning("Tried to parse an inventory but failed.")
 
         if split[0].upper() == trigger:
 
@@ -95,7 +102,7 @@ def run():
                 elif split[1] in ["v", "vote"]:
                     embed = e.subcommands.call_vote(user)
                 else: 
-                    embed = e.subcommands.call_convert(message, area)
+                    embed = e.subcommands.call_convert(message, area, db, user)
 
             await message.channel.send(embed = embed)
  
