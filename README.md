@@ -4,6 +4,8 @@
 
 This is a Discord bot which implements a simple shortest path graph-based conversion strategy between the many resources available in Epic RPG. It allows users to quickly switch areas as they progress through the game and intelligently alerts them to impossible trades (apples for logs in Area 1, for example). A user is automatically registered with the bot their first time using it, and information such as area preferences and usage statistics are persistently stored in a PostgreSQL database. 
 
+**Note:** I've retired this bot seeing as I do not have the computational resources to keep it online for the 100+ servers that it was active in. I also am unwilling to go through Discord's (draconian) verification process. The code here is fully functional, so if anyone is interested in picking it up and running with it, please go ahead and let me know if you need any help. 
+
 
 ---
 
